@@ -1,6 +1,7 @@
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.efficientnet import preprocess_input
 import numpy as np
 from PIL import Image
 
@@ -24,7 +25,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.subheader(":red[Upload an image to classify: **Bird 🐦 or Drone 🚁**]")
+st.subheader(":red[Upload an image to classify: **Bird 🐦 or  Drone 🚁**]")
 
 # -----------------------
 # Load Model
@@ -33,13 +34,12 @@ st.subheader(":red[Upload an image to classify: **Bird 🐦 or Drone 🚁**]")
 def load_model():
     model = tf.keras.models.load_model(
         r"C:\Users\ADMIN\Documents\mini_project_guvi\project_aerial_object_classification&detection\best_model.keras",
-        compile=False
+        custom_objects={'preprocess_input': preprocess_input}
     )
     return model
 model = load_model()
 
 IMG_SIZE = 128
-
 # -----------------------
 # Image Upload
 # -----------------------
@@ -60,6 +60,7 @@ if uploaded_file is not None:
     # Prediction
     # -----------------------
     prediction = model.predict(img_array)[0][0]
+    st.write(prediction)
 
     if prediction > 0.5:
         label = "Drone 🚁"
